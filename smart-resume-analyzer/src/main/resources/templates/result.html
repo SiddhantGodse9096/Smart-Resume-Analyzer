@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Result</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #667eea; margin-bottom: 10px; }
+        .file-name { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .score-section { text-align: center; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white; margin-bottom: 30px; }
+        .score { font-size: 60px; font-weight: bold; margin: 10px 0; }
+        .section { margin-bottom: 30px; }
+        .section h2 { color: #667eea; font-size: 20px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .tag { display: inline-block; background: #f0f0f0; padding: 8px 15px; margin: 5px; border-radius: 20px; font-size: 14px; color: #333; }
+        .suggestion { background: #fff3cd; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #ffc107; }
+        .back-btn { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; transition: transform 0.2s; }
+        .back-btn:hover { transform: translateY(-2px); }
+        .info-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .info-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Resume Analysis Result</h1>
+        <p class="file-name" th:text="'File: ' + ${analysis.fileName}"></p>
+
+        <div class="score-section">
+            <h2 style="color: white; border: none;">Resume Score</h2>
+            <div class="score" th:text="${analysis.score} + '/100'"></div>
+            <p th:if="${analysis.score >= 70}">Excellent Resume! 🎉</p>
+            <p th:if="${analysis.score >= 40 && analysis.score < 70}">Good Resume, but can be improved 👍</p>
+            <p th:if="${analysis.score < 40}">Needs Improvement 📝</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Skills Detected (<span th:text="${#lists.size(analysis.skills)}"></span>)</h2>
+            <div th:if="${#lists.isEmpty(analysis.skills)}">
+                <p style="color: #999;">No skills detected</p>
+            </div>
+            <div th:each="skill : ${analysis.skills}">
+                <span class="tag" th:text="${skill}"></span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📧 Contact Information</h2>
+            <div class="info-item">
+                <strong>Email:</strong> 
+                <span th:if="${#lists.isEmpty(analysis.emails)}" style="color: #999;">Not found</span>
+                <span th:each="email : ${analysis.emails}" th:text="${email}"></span>
+            </div>
+            <div class="info-item">
+                <strong>Phone:</strong> 
+                <span th:if="${#lists.isEmpty(analysis.phoneNumbers)}" style="color: #999;">Not found</span>
+                <span th:each="phone : ${analysis.phoneNumbers}" th:text="${phone}"></span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎓 Education</h2>
+            <div th:if="${#lists.isEmpty(analysis.education)}">
+                <p style="color: #999;">No education information detected</p>
+            </div>
+            <div th:each="edu : ${analysis.education}">
+                <span class="tag" th:text="${edu}"></span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💼 Experience</h2>
+            <p th:if="${analysis.experienceYears > 0}" th:text="${analysis.experienceYears} + ' years detected'"></p>
+            <p th:if="${analysis.experienceYears == 0}" style="color: #999;">Experience not clearly mentioned</p>
+        </div>
+
+        <div class="section">
+            <h2>💡 Suggestions for Improvement</h2>
+            <div th:each="suggestion : ${analysis.suggestions}" class="suggestion" th:text="${suggestion}"></div>
+        </div>
+
+        <a href="/" class="back-btn">← Analyze Another Resume</a>
+    </div>
+</body>
+</html>
